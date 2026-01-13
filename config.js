@@ -3,16 +3,16 @@
 
 const API_CONFIG = { 
     // استبدل هذا بعنوان الخادم الفعلي الذي يعمل
-    base: "https://your-actual-server.com:7000", 
-    user: "your_actual_username", 
-    pass: "your_actual_password" 
+    base: "http://p1.planet208.com:7000", 
+    user: "sigma747", 
+    pass: "747123658" 
 };
 
 // يمكنك أيضًا إضافة خوادم احتياطية
 const BACKUP_SERVERS = [
     "https://backup1.server.com:7000",
     "https://backup2.server.com:7000",
-    "http://alternative-server.com:8000"
+    "http://p1.planet208.com:7000"
 ];
 
 // إعدادات إضافية للمشغل
