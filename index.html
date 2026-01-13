@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; media-src * blob: data:;">
+    <title>DAMI X-PRO | عماد الدين لمراني</title>
+    
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/2965/2965363.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="config.js"></script>
+    <style>
+        :root {
+            --bg-body: #050505; --bg-card: #121212; --bg-sidebar: rgba(18, 18, 18, 0.98);
+            --text-main: #ffffff; --text-secondary: #a1a1aa; --accent-color: #d4af37;
+            --border-color: rgba(212, 175, 55, 0.15); --gradient-accent: linear-gradient(135deg, #d4af37 0%, #bf953f 100%);
+        }
+        .light-mode {
+            --bg-body: #F0F2F5; --bg-card: #FFFFFF; --bg-sidebar: #FFFFFF;
+            --text-main: #050505; --text-secondary: #65676B; --accent-color: #1877F2; --border-color: #dddfe2;
+        }
+        body { background-color: var(--bg-body); color: var(--text-main); font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        .sidebar { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: var(--bg-sidebar); backdrop-filter: blur(15px); z-index: 1000; transition: 0.4s; padding: 20px; box-shadow: -5px 0 20px rgba(0,0,0,0.5); }
+        .sidebar.open { right: 0; }
+        html[dir="ltr"] .sidebar { right: auto; left: -300px; }
+        html[dir="ltr"] .sidebar.open { left: 0; }
+        .sidebar-link { display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s; color: var(--text-main); }
+        .sidebar-link:hover { background: rgba(212, 175, 55, 0.1); color: var(--accent-color); }
+        .whatsapp-btn { position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px; background: #25d366; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; z-index: 999; }
+        .back-to-top { position: fixed; bottom: 105px; left: 35px; width: 50px; height: 50px; background: var(--accent-color); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; z-index: 998; cursor: pointer; }
+        .back-to-top.show { display: flex; }
+        .media-card { background: var(--bg-card); border-radius: 12px; padding: 10px; border: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; }
+        .media-card:hover { border-color: var(--accent-color); transform: translateY(-5px); }
+        .mode-btn.active { background: var(--gradient-accent); color: white; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--bg-card); padding: 30px; border-radius: 20px; max-width: 500px; width: 100%; border: 1px solid var(--accent-color); text-align: center; }
+        .manual-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--accent-color); color: white; padding: 12px 24px; border-radius: 9999px; font-weight: bold; z-index: 10; cursor: pointer; transition: 0.3s; border: none; }
+        .manual-play-btn:hover { transform: translate(-50%, -50%) scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <a href="https://wa.me/212783539816" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a>
+    <div id="backToTop" class="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
+    <div id="overlay" class="fixed inset-0 bg-black/60 z-[999] hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="sidebar">
+        <div class="flex justify-between items-center mb-8 pb-4 border-b border-[var(--border-color)]">
+            <div class="text-xl font-black text-[var(--accent-color)]">DAMI X-PRO</div>
+            <i class="fas fa-times cursor-pointer text-xl" onclick="toggleSidebar()"></i>
+        </div>
+        <nav>
+            <div class="sidebar-link" onclick="location.reload()"><i class="fas fa-home"></i> <span data-i18n="home">الرئيسية</span></div>
+            <div class="sidebar-link" onclick="openModal('about')"><i class="fas fa-info-circle"></i> <span data-i18n="about">من نحن</span></div>
+            <div class="sidebar-link" onclick="window.open('https://wa.me/212783539816')"><i class="fas fa-envelope"></i> <span data-i18n="contact">اتصل بنا</span></div>
+            <div class="sidebar-link" onclick="openModal('privacy')"><i class="fas fa-user-shield"></i> <span data-i18n="privacy">سياسة الخصوصية</span></div>
+            <div class="my-4 border-t border-[var(--border-color)]"></div>
+            <a href="https://dami-xpro.com/download" class="sidebar-link" style="background: var(--gradient-accent); color: white; border-radius: 12px;">
+                <i class="fab fa-android" style="color: white;"></i> <span data-i18n="download">تحميل التطبيق</span>
+            </a>
+        </nav>
+    </aside>
+
+    <header class="bg-[var(--bg-card)] border-b border-[var(--border-color)] sticky top-0 z-[50] p-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-bars cursor-pointer text-xl" onclick="toggleSidebar()"></i>
+            <div class="text-xl font-bold">DAMI X-PRO</div>
+        </div>
+        <div class="flex items-center gap-3">
+            <select id="langSelect" onchange="setLanguage(this.value)" class="bg-transparent border border-[var(--border-color)] rounded-lg px-2 py-1 text-sm outline-none text-[var(--text-main)]">
+                <option value="ar">العربية</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+            </select>
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-800/50 cursor-pointer" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></div>
+        </div>
+    </header>
+
+    <div class="player-wrapper w-full bg-black flex justify-center relative">
+        <video id="player" playsinline controls crossorigin class="w-full max-w-5xl aspect-video"></video>
+    </div>
+
+    <main class="max-w-7xl mx-auto p-4">
+        <div class="relative max-w-2xl mx-auto my-8">
+            <input type="text" id="searchInput" class="w-full bg-[var(--bg-card)] border-2 border-[var(--border-color)] rounded-full py-3 px-12 outline-none focus:border-[var(--accent-color)] text-[var(--text-main)]" placeholder="ابحث هنا...">
+            <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+        </div>
+
+        <div class="flex max-w-md mx-auto bg-[var(--bg-card)] border border-[var(--border-color)] p-1 rounded-2xl mb-8">
+            <button onclick="switchMode('live')" class="mode-btn active flex-1 py-2 rounded-xl text-sm font-bold" data-mode="live"><span data-i18n="live">مباشر</span></button>
+            <button onclick="switchMode('movies')" class="mode-btn flex-1 py-2 rounded-xl text-sm font-bold" data-mode="movies"><span data-i18n="movies">أفلام</span></button>
+            <button onclick="switchMode('series')" class="mode-btn flex-1 py-2 rounded-xl text-sm font-bold" data-mode="series"><span data-i18n="series">مسلسلات</span></button>
+        </div>
+
+        <div id="categoriesContainer" class="flex overflow-x-auto gap-2 pb-4 mb-6"></div>
+        <div id="contentGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+        <div id="loader" class="hidden text-center p-10"><i class="fas fa-spinner fa-spin text-3xl text-[var(--accent-color)]"></i></div>
+        <button id="loadMoreBtn" onclick="renderItems()" class="hidden mx-auto mt-8 bg-[var(--bg-card)] border border-[var(--accent-color)] text-[var(--accent-color)] px-10 py-2 rounded-full font-bold hover:bg-[var(--accent-color)] hover:text-white transition" data-i18n="load_more">عرض المزيد</button>
+    </main>
+
+    <footer class="bg-[var(--bg-card)] border-t border-[var(--border-color)] p-10 text-center mt-20">
+        <a href="https://dami-xpro.com/download" class="inline-flex items-center gap-3 bg-[var(--accent-color)] text-white px-8 py-3 rounded-full font-bold mb-8 hover:scale-105 transition">
+            <i class="fab fa-android"></i> <span data-i18n="download">تحميل التطبيق</span>
+        </a>
+        <p class="font-bold text-xl mb-2 text-[var(--text-main)]">DAMI X-PRO &copy; <span id="year">2025</span></p>
+        <p class="text-gray-500">Developed by <span class="text-[var(--accent-color)]">Imad Eddine Lamrani</span></p>
+    </footer>
+
+    <div id="modal-about" class="modal" onclick="closeModal('about')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 class="text-2xl font-bold text-[var(--accent-color)] mb-4" data-i18n="about">من نحن</h2>
+            <p class="text-[var(--text-secondary)]" data-i18n="about_text">منصة DAMI X-PRO لمشاهدة المحتوى الترفيهي بجودة عالية.</p>
+            <button class="mt-6 px-8 py-2 bg-[var(--accent-color)] text-white rounded-lg" onclick="closeModal('about')" data-i18n="close">إغلاق</button>
+        </div>
+    </div>
+    <div id="modal-privacy" class="modal" onclick="closeModal('privacy')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 class="text-2xl font-bold text-[var(--accent-color)] mb-4" data-i18n="privacy">سياسة الخصوصية</h2>
+            <p class="text-[var(--text-secondary)] text-sm">نحن نحمي خصوصية بياناتكم بشكل كامل.</p>
+            <button class="mt-6 w-full py-2 bg-[var(--accent-color)] text-white rounded-lg" onclick="closeModal('privacy')" data-i18n="close">إغلاق</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.10/dist/hls.min.js"></script>
+
+    <script>
+        const API_CONFIG = { base: "http://p1.planet208.com:7000", user: "sigma747", pass: "747123658" };
+
+        const i18n = {
+            ar: { home: "الرئيسية", about: "من نحن", contact: "اتصل بنا", privacy: "سياسة الخصوصية", download: "تحميل التطبيق", live: "مباشر", movies: "أفلام", series: "مسلسلات", load_more: "عرض المزيد", close: "إغلاق", search: "ابحث هنا...", about_text: "تطبيق DAMI X-PRO هو منصتكم لمشاهدة أفضل القنوات والأفلام بجودة عالية." },
+            en: { home: "Home", about: "About Us", contact: "Contact", privacy: "Privacy", download: "Download App", live: "Live", movies: "Movies", series: "Series", load_more: "Load More", close: "Close", search: "Search...", about_text: "DAMI X-PRO is your high-quality IPTV platform." },
+            fr: { home: "Accueil", about: "À propos", contact: "Contact", privacy: "Privée", download: "Télécharger", live: "Direct", movies: "Films", series: "Séries", load_more: "Plus", close: "Fermer", search: "Chercher...", about_text: "DAMI X-PRO est votre plateforme IPTV de haute qualité." },
+            es: { home: "Inicio", about: "Nosotros", contact: "Contacto", privacy: "Privacidad", download: "Descargar", live: "Vivo", movies: "Películas", series: "Series", load_more: "Más", close: "Cerrar", search: "Buscar...", about_text: "DAMI X-PRO es tu plataforma IPTV de alta calidad." }
+        };
+
+        let currentMode = 'live', allData = [], displayedCount = 0, hls = null;
+        let playerInstance = null;
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('hidden'); }
+        function openModal(id) { document.getElementById('modal-' + id).style.display = 'flex'; toggleSidebar(); }
+        function closeModal(id) { document.getElementById('modal-' + id).style.display = 'none'; }
+        function toggleTheme() { document.body.classList.toggle('light-mode'); document.getElementById('themeIcon').className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon'; }
+
+        function setLanguage(lang) {
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = i18n[lang][el.getAttribute('data-i18n')]; });
+            document.getElementById('searchInput').placeholder = i18n[lang].search;
+            localStorage.setItem('lang', lang);
+            fetchCategories();
+        }
+
+        async function fetchData(action, params = {}) {
+            // بناء رابط API مباشر
+            const baseUrl = `${API_CONFIG.base}/player_api.php`;
+            const queryParams = new URLSearchParams({
+                username: API_CONFIG.user,
+                password: API_CONFIG.pass,
+                action: action,
+                ...params
+            });
+            const url = `${baseUrl}?${queryParams.toString()}`;
+            
+            console.log('جلب البيانات من:', url);
+            
+            try {
+                // محاولة الاتصال المباشر أولاً
+                const res = await fetch(url, { 
+                    mode: 'cors', 
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (!res.ok) {
+                    throw new Error(`API responded with status: ${res.status}`);
+                }
+                return await res.json();
+            } catch (directError) {
+                console.warn('فشل الجلب المباشر، جاري استخدام البروكسي:', directError.message);
+                
+                // استخدام بديل لـ AllOrigins (CORS Anywhere)
+                try {
+                    const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+                    const proxyRes = await fetch(proxyUrl);
+                    if (!proxyRes.ok) throw new Error(`Proxy error: ${proxyRes.status}`);
+                    return await proxyRes.json();
+                } catch (proxyError) {
+                    console.error('فشلت جميع طرق الجلب:', proxyError);
+                    // إرجاع بيانات تجريبية لعرض واجهة العمل
+                    return getFallbackData(action, params);
+                }
+            }
+        }
+
+        // دالة احتياطية في حالة فشل الاتصال
+        function getFallbackData(action, params) {
+            console.log('استخدام بيانات تجريبية لـ:', action);
+            
+            if (action.includes('categories')) {
+                return [
+                    { category_id: '1', category_name: 'عام' },
+                    { category_id: '2', category_name: 'رياضة' },
+                    { category_id: '3', category_name: 'أخبار' },
+                    { category_id: '4', category_name: 'ترفيه' },
+                    { category_id: '5', category_name: 'أفلام' }
+                ];
+            }
+            
+            if (action.includes('live_streams')) {
+                return [
+                    { stream_id: '1', name: 'قناة تجريبية 1', stream_icon: 'https://cdn-icons-png.flaticon.com/512/2965/2965363.png', container_extension: 'm3u8' },
+                    { stream_id: '2', name: 'قناة تجريبية 2', stream_icon: 'https://cdn-icons-png.flaticon.com/512/2965/2965363.png', container_extension: 'm3u8' },
+                    { stream_id: '3', name: 'قناة تجريبية 3', stream_icon: 'https://cdn-icons-png.flaticon.com/512/2965/2965363.png', container_extension: 'm3u8' }
+                ];
+            }
+            
+            if (action.includes('vod_streams') || action.includes('series')) {
+                return [
+                    { vod_id: '1', title: 'فيلم تجريبي 1', cover: 'https://cdn-icons-png.flaticon.com/512/2965/2965363.png', container_extension: 'mp4' },
+                    { vod_id: '2', title: 'فيلم تجريبي 2', cover: 'https://cdn-icons-png.flaticon.com/512/2965/2965363.png', container_extension: 'mkv' },
+                    { vod_id: '3', title: 'مسلسل تجريبي 1', cover: 'https://cdn-icons-png.flaticon.com/512/2965/2965363.png', container_extension: 'm3u8' }
+                ];
+            }
+            
+            return [];
+        }
+
+        async function fetchCategories() {
+            const action = currentMode === 'live' ? 'get_live_categories' : (currentMode === 'movies' ? 'get_vod_categories' : 'get_series_categories');
+            const cats = await fetchData(action);
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = `<button onclick="loadCategory('all', this)" class="cat-btn whitespace-nowrap px-4 py-1 rounded-full bg-[var(--accent-color)] text-white text-sm font-bold">الكل</button>`;
+            if(Array.isArray(cats)) {
+                cats.forEach(c => { container.innerHTML += `<button onclick="loadCategory('${c.category_id}', this)" class="cat-btn whitespace-nowrap px-4 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] text-sm">${c.category_name}</button>`; });
+            }
+            loadCategory('all');
+        }
+
+        async function loadCategory(id, btn) {
+            if(btn) { document.querySelectorAll('.cat-btn').forEach(b => { b.classList.remove('bg-[var(--accent-color)]', 'text-white', 'font-bold'); b.classList.add('bg-[var(--bg-card)]'); }); btn.classList.add('bg-[var(--accent-color)]', 'text-white', 'font-bold'); }
+            document.getElementById('contentGrid').innerHTML = ''; document.getElementById('loader').classList.remove('hidden');
+            const action = currentMode === 'live' ? 'get_live_streams' : (currentMode === 'movies' ? 'get_vod_streams' : 'get_series');
+            allData = await fetchData(action, id !== 'all' ? { category_id: id } : {});
+            displayedCount = 0; document.getElementById('loader').classList.add('hidden');
+            renderItems();
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('contentGrid');
+            const chunk = Array.isArray(allData) ? allData.slice(displayedCount, displayedCount + 30) : [];
+            chunk.forEach(item => {
+                const div = document.createElement('div'); div.className = 'media-card';
+                div.innerHTML = `<img src="${item.stream_icon || item.cover}" class="w-full aspect-square object-contain bg-black rounded-lg" onerror="this.src='https://via.placeholder.com/150'"><div class="text-xs font-bold truncate mt-2 text-center">${item.name || item.title}</div>`;
+                div.onclick = () => playMedia(item.stream_id || item.vod_id || item.id, item.container_extension || item.extension || 'mp4');
+                grid.appendChild(div);
+            });
+            displayedCount += chunk.length;
+            document.getElementById('loadMoreBtn').style.display = displayedCount < allData.length ? 'block' : 'none';
+        }
+
+        // دالة مساعدة للتحميل المباشر
+        function playDirectFallback(videoElement, url) {
+            // تعيين مصدر الفيديو مباشرة
+            videoElement.src = url;
+            
+            // محاولة تحديد نوع الملف من الامتداد
+            const ext = url.split('.').pop().toLowerCase();
+            const mimeTypes = {
+                'mp4': 'video/mp4',
+                'mkv': 'video/x-matroska',
+                'webm': 'video/webm',
+                'avi': 'video/x-msvideo',
+                'mov': 'video/quicktime',
+                'm4v': 'video/mp4',
+                'flv': 'video/x-flv',
+                'wmv': 'video/x-ms-wmv',
+                '3gp': 'video/3gpp',
+                'ts': 'video/mp2t'
+            };
+            
+            // تعيين نوع MIME إذا كان معروفًا
+            if (mimeTypes[ext]) {
+                videoElement.type = mimeTypes[ext];
+            }
+            
+            videoElement.load();
+            videoElement.play().catch(e => {
+                console.warn('التشغيل التلقائي محظور، يتطلب تفاعل المستخدم:', e);
+                // عرض زر تشغيل يدوي إذا لزم الأمر
+                showManualPlayButton();
+            });
+        }
+
+        // عرض زر تشغيل يدوي إذا فشل التشغيل التلقائي
+        function showManualPlayButton() {
+            const playerContainer = document.querySelector('.player-wrapper');
+            if (!playerContainer.querySelector('.manual-play-btn')) {
+                const btn = document.createElement('button');
+                btn.className = 'manual-play-btn';
+                btn.innerHTML = '<i class="fas fa-play mr-2"></i> انقر للتشغيل';
+                btn.onclick = () => {
+                    document.getElementById('player').play();
+                    btn.remove();
+                };
+                playerContainer.appendChild(btn);
+            }
+        }
+
+        function playMedia(id, ext) {
+            const video = document.getElementById('player');
+            
+            // تدمير أي نسخة سابقة من HLS
+            if (hls) {
+                hls.destroy();
+                hls = null;
+            }
+            
+            // إزالة أي أزرار تشغيل يدوية سابقة
+            const manualBtn = document.querySelector('.manual-play-btn');
+            if (manualBtn) manualBtn.remove();
+            
+            // إنشاء رابط URL بناءً على نوع المحتوى وامتداده
+            let url;
+            if (currentMode === 'live') {
+                // البث المباشر (HLS)
+                url = `${API_CONFIG.base}/live/${API_CONFIG.user}/${API_CONFIG.pass}/${id}.m3u8`;
+            } else if (currentMode === 'movies' || currentMode === 'series') {
+                // تحديد الامتداد المناسب
+                const extension = ext || 'mp4';
+                
+                // بناء URL للمحتوى المسجل
+                if (extension === 'm3u8' || extension === 'ts' || extension === 'm3u') {
+                    // تنسيق HLS للمسلسلات/الأفلام
+                    url = `${API_CONFIG.base}/movie/${API_CONFIG.user}/${API_CONFIG.pass}/${id}.${extension}`;
+                } else {
+                    // تنسيقات مباشرة (MP4, MKV, إلخ)
+                    url = `${API_CONFIG.base}/movie/${API_CONFIG.user}/${API_CONFIG.pass}/${id}.${extension}`;
+                }
+            }
+            
+            console.log('جاري تشغيل الرابط:', url);
+            
+            // تهيئة Plyr إذا لم تكن موجودة
+            if (!playerInstance) {
+                playerInstance = new Plyr('#player', {
+                    settings: ['quality', 'speed', 'loop'],
+                    autoplay: true,
+                    controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+                    hideControls: false,
+                    resetOnEnd: false
+                });
+            }
+            
+            // التحقق من أن URL صالح
+            if (!url || !url.startsWith('http')) {
+                console.error('رابط غير صالح:', url);
+                alert('تعذر إنشاء رابط التشغيل. يرجى التحقق من اتصال API أو تحديث بيانات الاعتماد في config.js');
+                return;
+            }
+            
+            // التعامل مع HLS مقابل الفيديو المباشر
+            const isHLS = url.includes('.m3u8') || url.includes('.ts') || url.includes('.m3u');
+            
+            if (isHLS && Hls.isSupported()) {
+                // استخدام HLS.js للتشغيل المتدفق
+                hls = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 90,
+                    xhrSetup: (xhr) => {
+                        xhr.withCredentials = false;
+                        // إضافة رؤوس للتعامل مع CORS إذا لزم الأمر
+                        xhr.setRequestHeader('Accept', '*/*');
+                        xhr.setRequestHeader('Origin', window.location.origin);
+                    }
+                });
+                
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(e => console.log('منع التشغيل التلقائي:', e));
+                });
+                
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    console.error('خطأ HLS:', data);
+                    if (data.fatal) {
+                        switch(data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                console.log('خطأ شبكة، إعادة المحاولة...');
+                                hls.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                console.log('خطأ وسائط، محاولة الاسترداد...');
+                                hls.recoverMediaError();
+                                break;
+                            default:
+                                console.log('خطأ غير قابل للاسترداد، التحويل إلى التشغيل المباشر...');
+                                // تبديل إلى التشغيل المباشر كحل بديل
+                                playDirectFallback(video, url);
+                                break;
+                        }
+                    }
+                });
+                
+            } else if (video.canPlayType('application/vnd.apple.mpegurl') || video.canPlayType('application/x-mpegURL')) {
+                // دعم HLS الأصلي (Safari / iOS)
+                video.src = url;
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(e => console.log('منع التشغيل التلقائي:', e));
+                });
+            } else {
+                // تشغيل مباشر لـ MP4, MKV, إلخ
+                playDirectFallback(video, url);
+            }
+            
+            // التمرير إلى الأعلى
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            
+            // تحديث حالة المشغل
+            if (playerInstance) {
+                playerInstance.source = {
+                    type: 'video',
+                    sources: [{
+                        src: url,
+                        type: isHLS ? 'application/x-mpegURL' : 'video/mp4'
+                    }]
+                };
+            }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+            fetchCategories();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allData.filter(i => (i.name || i.title || "").toLowerCase().includes(term)).slice(0, 30);
+            const grid = document.getElementById('contentGrid'); grid.innerHTML = '';
+            filtered.forEach(item => {
+                const div = document.createElement('div'); div.className = 'media-card';
+                div.innerHTML = `<img src="${item.stream_icon || item.cover}" class="w-full aspect-square object-contain bg-black rounded-lg"><div class="text-xs font-bold truncate text-center mt-2">${item.name || item.title}</div>`;
+                div.onclick = () => playMedia(item.stream_id || item.vod_id || item.id, item.container_extension || item.extension || 'mp4');
+                grid.appendChild(div);
+            });
+        });
+
+        window.onscroll = () => { document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400); };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // تهيئة Plyr مع إعدادات محسنة
+            playerInstance = new Plyr('#player', {
+                settings: ['quality', 'speed', 'loop'],
+                autoplay: false,
+                controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+                hideControls: false,
+                resetOnEnd: false,
+                keyboard: { focused: true, global: true },
+                tooltips: { controls: true, seek: true }
+            });
+            
+            const savedLang = localStorage.getItem('lang') || 'ar';
+            document.getElementById('langSelect').value = savedLang;
+            setLanguage(savedLang);
+            
+            // إعداد سنة التذييل
+            document.getElementById('year').textContent = new Date().getFullYear();
+            
+            // إضافة زر اختبار للروابط المباشرة
+            const testBtn = document.createElement('button');
+            testBtn.className = 'fixed bottom-40 left-5 bg-blue-500 text-white p-2 rounded z-[999]';
+            testBtn.innerHTML = '<i class="fas fa-video mr-2"></i> اختبار';
+            testBtn.onclick = testLocalPlay;
+            document.body.appendChild(testBtn);
+        });
+
+        // وظيفة اختبار تشغيل ملف مباشر
+        function testLocalPlay() {
+            const video = document.getElementById('player');
+            const testUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+            alert(`جاري اختبار تشغيل ملف تجريبي:\n${testUrl}`);
+            playDirectFallback(video, testUrl);
+        }
+    </script>
+</body>
+</html>
